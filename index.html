@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vedant Chidrawar — Python Developer</title>
+<meta name="description" content="Portfolio of Vedant Chidrawar, Python developer building web applications, APIs, and ML/data-driven systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #12141c;
+    --surface-2: #171a24;
+    --border: #20232e;
+    --border-strong: #2c303e;
+    --text: #c9cddb;
+    --text-dim: #6b7086;
+    --text-bright: #eef0f6;
+    --purple: #9d7cd8;
+    --cyan: #5ec9c0;
+    --amber: #e0af68;
+    --pink: #f7768e;
+    --green: #9ece6a;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  ::selection { background: var(--purple); color: var(--bg); }
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+  code, .mono { font-family: var(--mono); }
+
+  /* ---- Top nav (tab bar look) ---- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 900px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; gap: 4px; height: 48px;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    font-family: var(--mono); font-size: 13px; color: var(--text-dim);
+    padding: 0 14px; height: 48px; display: flex; align-items: center; gap: 6px;
+    border-right: 1px solid var(--border); white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .nav-tab:hover { color: var(--text-bright); text-decoration: none; }
+  .nav-tab .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); }
+  .nav-tab.active { color: var(--text-bright); }
+  .nav-tab.active .dot { background: var(--green); }
+
+  /* ---- Hero / editor window ---- */
+  header { padding: 56px 0 40px; }
+  .editor-window {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .editor-titlebar {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .editor-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .editor-dot.r { background: #f7768e44; border: 1px solid #f7768e88; }
+  .editor-dot.y { background: #e0af6844; border: 1px solid #e0af6888; }
+  .editor-dot.g { background: #9ece6a44; border: 1px solid #9ece6a88; }
+  .editor-filename { font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-left: 8px; }
+  .editor-body {
+    display: flex;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.85;
+    padding: 20px 0;
+    overflow-x: auto;
+  }
+  .line-numbers {
+    color: var(--border-strong);
+    padding: 0 16px 0 20px;
+    text-align: right;
+    user-select: none;
+    min-width: 44px;
+  }
+  .code-content { padding-right: 24px; white-space: pre; }
+  .tok-kw { color: var(--purple); }
+  .tok-class { color: var(--amber); }
+  .tok-str { color: var(--green); }
+  .tok-comment { color: var(--text-dim); font-style: italic; }
+  .tok-fn { color: var(--cyan); }
+  .tok-punc { color: var(--text-dim); }
+
+  .hero-links { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--mono); font-size: 13px;
+    padding: 9px 16px; border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn:hover { border-color: var(--cyan); color: var(--cyan); text-decoration: none; }
+  .btn-primary { background: var(--cyan); color: var(--bg); border-color: var(--cyan); font-weight: 500; }
+  .btn-primary:hover { background: transparent; color: var(--cyan); }
+
+  /* ---- Section framing ---- */
+  section { padding: 48px 0; border-top: 1px solid var(--border); }
+  .section-tag {
+    font-family: var(--mono); font-size: 12px; color: var(--purple);
+    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-tag::before { content: '>'; color: var(--text-dim); }
+  h2 {
+    font-family: var(--mono); font-size: 22px; font-weight: 500;
+    color: var(--text-bright); margin-bottom: 24px;
+  }
+  h2 .path { color: var(--text-dim); font-weight: 400; }
+
+  /* ---- About ---- */
+  .about-text { max-width: 680px; color: var(--text); font-size: 15.5px; }
+  .about-text p + p { margin-top: 14px; }
+
+  /* ---- Experience ---- */
+  .exp-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+  }
+  .exp-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .exp-role { font-weight: 600; color: var(--text-bright); font-size: 15.5px; }
+  .exp-date { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+  .exp-org { color: var(--cyan); font-size: 14px; margin-bottom: 12px; }
+  .exp-item ul { padding-left: 18px; font-size: 14.5px; color: var(--text); }
+  .exp-item li + li { margin-top: 6px; }
+  .exp-stack { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .tag {
+    font-family: var(--mono); font-size: 11.5px;
+    padding: 3px 9px; border-radius: 4px;
+    background: var(--surface-2); color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ---- Projects ---- */
+  .project-grid { display: grid; gap: 16px; }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    transition: border-color 0.15s;
+  }
+  .project-card:hover { border-color: var(--border-strong); }
+  .project-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+  .project-name { font-family: var(--mono); font-weight: 500; font-size: 16px; color: var(--text-bright); }
+  .project-links { display: flex; gap: 14px; font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+  .project-desc { color: var(--text); font-size: 14.5px; margin: 10px 0 14px; }
+  .project-desc li { margin-left: 18px; margin-top: 6px; }
+  .project-stack { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ---- Skills ---- */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .skill-group { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .skill-label { font-family: var(--mono); font-size: 12px; color: var(--amber); margin-bottom: 10px; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ---- Education / certs ---- */
+  .edu-item { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14.5px; }
+  .edu-item:last-child { border-bottom: none; }
+  .edu-school { color: var(--text-dim); font-size: 13px; }
+  .edu-date { font-family: var(--mono); font-size: 12.5px; color: var(--text-dim); white-space: nowrap; }
+  .cert-list { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .cert-pill {
+    font-size: 13px; color: var(--text);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px;
+  }
+
+  /* ---- Contact / footer ---- */
+  footer { padding: 48px 0 64px; }
+  .contact-box {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+  }
+  .contact-box h2 { justify-content: center; }
+  .contact-links { display: flex; justify-content: center; gap: 14px; margin-top: 20px; flex-wrap: wrap; }
+  .footer-note { text-align: center; font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-top: 32px; }
+
+  @media (max-width: 640px) {
+    .editor-body { font-size: 12.5px; }
+    .line-numbers { min-width: 30px; padding: 0 10px 0 14px; }
+    h2 { font-size: 19px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#about" class="nav-tab active"><span class="dot"></span>about.py</a>
+    <a href="#experience" class="nav-tab"><span class="dot"></span>experience.py</a>
+    <a href="#projects" class="nav-tab"><span class="dot"></span>projects.py</a>
+    <a href="#skills" class="nav-tab"><span class="dot"></span>skills.json</a>
+    <a href="#education" class="nav-tab"><span class="dot"></span>education.md</a>
+    <a href="#contact" class="nav-tab"><span class="dot"></span>contact.py</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header id="about">
+    <div class="editor-window">
+      <div class="editor-titlebar">
+        <span class="editor-dot r"></span><span class="editor-dot y"></span><span class="editor-dot g"></span>
+        <span class="editor-filename">developer.py</span>
+      </div>
+      <div class="editor-body">
+        <div class="line-numbers">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11</div>
+        <div class="code-content"><span class="tok-kw">class</span> <span class="tok-class">VedantChidrawar</span><span class="tok-punc">:</span>
+    <span class="tok-comment"># Python developer — web, APIs, and ML-driven systems</span>
+    <span class="tok-fn">role</span> <span class="tok-punc">=</span> <span class="tok-str">"Python Developer"</span>
+    <span class="tok-fn">based_in</span> <span class="tok-punc">=</span> <span class="tok-str">"Hyderabad, India"</span>
+    <span class="tok-fn">education</span> <span class="tok-punc">=</span> <span class="tok-str">"B.E. AI &amp; Data Science, 2026"</span>
+    <span class="tok-fn">focus</span> <span class="tok-punc">=</span> <span class="tok-punc">[</span><span class="tok-str">"backend APIs"</span><span class="tok-punc">,</span> <span class="tok-str">"data pipelines"</span><span class="tok-punc">,</span> <span class="tok-str">"applied ML"</span><span class="tok-punc">]</span>
+
+    <span class="tok-kw">def</span> <span class="tok-fn">currently_seeking</span><span class="tok-punc">(</span><span class="tok-kw">self</span><span class="tok-punc">):</span>
+        <span class="tok-kw">return</span> <span class="tok-str">"an entry-level Python / Software Engineering role"</span></div>
+      </div>
+    </div>
+    <div class="hero-links">
+      <a href="resume.pdf" download class="btn btn-primary">↓ Download resume</a>
+      <a href="https://github.com/Vedant01111" class="btn" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/vedant-chidrawar/" class="btn" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:vedantchidrawar01@gmail.com" class="btn">Email</a>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-tag">summary</div>
+    <h2>About <span class="path">/about</span></h2>
+    <div class="about-text">
+      <p>I'm a B.E. graduate in Artificial Intelligence and Data Science who builds with Python across the stack — from REST APIs and backend services to data pipelines and machine learning models. I like projects that go past the notebook or the demo: proper error handling, tests, containerization, and something a real user could actually run.</p>
+      <p>My recent work spans e-commerce platforms, security tooling, data analytics dashboards, and small AI agents — usually with Python doing the heavy lifting, backed by SQL, FastAPI or Node.js, and whatever frontend the project calls for.</p>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="section-tag">work</div>
+    <h2>Experience <span class="path">/experience</span></h2>
+    <div class="exp-item">
+      <div class="exp-head">
+        <span class="exp-role">Software Engineering Intern</span>
+        <span class="exp-date">Dec 2024 — Feb 2025</span>
+      </div>
+      <div class="exp-org">Scalefull Technologies</div>
+      <ul>
+        <li>Developed and enhanced web application modules — frontend components, backend business logic, and database operations — following modular, maintainable coding practices.</li>
+        <li>Built and integrated RESTful APIs, wrote database queries and CRUD operations, and implemented input validation and error handling for reliable application behavior.</li>
+        <li>Collaborated with the team using Git/GitHub, performed API testing and debugging, resolved issues, and took part in code reviews.</li>
+      </ul>
+      <div class="exp-stack">
+        <span class="tag">JavaScript</span><span class="tag">React.js</span><span class="tag">Python</span><span class="tag">REST APIs</span><span class="tag">SQL</span><span class="tag">Git</span><span class="tag">Postman</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-tag">portfolio</div>
+    <h2>Projects <span class="path">/projects</span></h2>
+    <div class="project-grid">
+
+      <div class="project-card">
+        <div class="project-head">
+          <span class="project-name">shopsphere/</span>
+          <div class="project-links">
+            <a href="https://github.com/Vedant01111/ShopSphere" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+        <p style="color:var(--text-dim); font-size:13.5px;">Full-stack e-commerce web application</p>
+        <ul class="project-desc">
+          <li>Production-grade e-commerce app — Next.js/TypeScript frontend, Node.js/Express + Prisma ORM backend on PostgreSQL, with JWT auth and role-based access control.</li>
+          <li>Integrated Razorpay payments with server-side signature verification and atomic transactions, plus Redis caching with automatic invalidation on high-traffic endpoints.</li>
+          <li>Built an admin analytics dashboard with Recharts; deployed on Vercel, Render, Neon PostgreSQL, and Upstash Redis.</li>
+        </ul>
+        <div class="project-stack">
+          <span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">PostgreSQL</span><span class="tag">Prisma</span><span class="tag">Redis</span><span class="tag">Razorpay</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-head">
+          <span class="project-name">isecure/</span>
+          <div class="project-links">
+            <a href="https://github.com/Vedant01111/AI-BASED-PHISHING-DETECTION-AND-PREVENTION-SYSTEM-IN-WIRELESS-ENVIRONMENT" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+        <p style="color:var(--text-dim); font-size:13.5px;">AI-based phishing detection &amp; prevention platform</p>
+        <ul class="project-desc">
+          <li>Full-stack platform (React.js, FastAPI, Python) that scans URLs and emails for phishing threats through an interactive web interface.</li>
+          <li>Built REST APIs with PostgreSQL, SQLAlchemy, and JWT authentication for user management, real-time threat analysis, and scan history.</li>
+          <li>Implemented ML-based threat detection and containerized the app with Docker for deployment.</li>
+        </ul>
+        <div class="project-stack">
+          <span class="tag">React.js</span><span class="tag">FastAPI</span><span class="tag">Python</span><span class="tag">PostgreSQL</span><span class="tag">SQLAlchemy</span><span class="tag">Scikit-learn</span><span class="tag">JWT</span><span class="tag">Docker</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-head">
+          <span class="project-name">agentic-ai-assistant/</span>
+          <div class="project-links">
+            <a href="https://github.com/Vedant01111/Agentic-AI-Assistant-with-MCP-tools" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+        <p style="color:var(--text-dim); font-size:13.5px;">Agentic AI assistant with MCP tool integration</p>
+        <ul class="project-desc">
+          <li>Multi-turn AI agent using LangGraph's ReAct-based orchestration for dynamic tool calling.</li>
+          <li>Integrated external tools through the Model Context Protocol (MCP) with per-session conversation memory.</li>
+          <li>Built an interactive Streamlit interface and containerized the application with Docker.</li>
+        </ul>
+        <div class="project-stack">
+          <span class="tag">Python</span><span class="tag">LangGraph</span><span class="tag">MCP</span><span class="tag">Streamlit</span><span class="tag">Docker</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-head">
+          <span class="project-name">olist-ecommerce-dashboard/</span>
+          <div class="project-links">
+            <a href="https://github.com/Vedant01111/Olist-ecommerce-dashboard" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+        <p style="color:var(--text-dim); font-size:13.5px;">SQL + Power BI e-commerce analytics dashboard</p>
+        <ul class="project-desc">
+          <li>Modeled a 9-table relational SQL database from 98K+ real e-commerce orders, with data quality checks and 8 business-question queries.</li>
+          <li>Built an interactive Power BI / Chart.js dashboard analyzing revenue, delivery performance, and customer satisfaction.</li>
+          <li>Found that late deliveries (4+ days) cut review scores by 2.35 stars on average — turned into a data-backed logistics recommendation.</li>
+        </ul>
+        <div class="project-stack">
+          <span class="tag">SQL</span><span class="tag">Python</span><span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Chart.js</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-head">
+          <span class="project-name">cancer-prediction-system/</span>
+          <div class="project-links">
+            <a href="https://vedant-chidrawar-cancer-prediction-system.streamlit.app" target="_blank" rel="noopener">Live demo ↗</a>
+            <a href="https://github.com/Vedant01111/Cancer-Prediction-System-using-Logistic-Regression" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+        <p style="color:var(--text-dim); font-size:13.5px;">Cancer risk prediction system (logistic regression)</p>
+        <ul class="project-desc">
+          <li>Full ML pipeline — preprocessing, training, and evaluation — wrapped in a scikit-learn Pipeline to prevent train/test leakage.</li>
+          <li>Logistic regression classifier with class-weight balancing, evaluated on accuracy, precision, recall, F1, and ROC-AUC.</li>
+          <li>Deployed as an interactive Streamlit app for real-time predictions on new patient data.</li>
+        </ul>
+        <div class="project-stack">
+          <span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">Pandas</span><span class="tag">Streamlit</span><span class="tag">pytest</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-tag">stack</div>
+    <h2>Skills <span class="path">/skills.json</span></h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-label">languages</div>
+        <div class="skill-tags">
+          <span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">TypeScript</span><span class="tag">SQL</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-label">backend &amp; apis</div>
+        <div class="skill-tags">
+          <span class="tag">FastAPI</span><span class="tag">Django</span><span class="tag">Node.js</span><span class="tag">Express.js</span><span class="tag">REST APIs</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-label">frontend</div>
+        <div class="skill-tags">
+          <span class="tag">React.js</span><span class="tag">Next.js</span><span class="tag">Tailwind CSS</span><span class="tag">HTML5/CSS3</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-label">data &amp; databases</div>
+        <div class="skill-tags">
+          <span class="tag">PostgreSQL</span><span class="tag">MySQL</span><span class="tag">MongoDB</span><span class="tag">SQLAlchemy</span><span class="tag">Prisma</span><span class="tag">Power BI</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-label">ai / ml</div>
+        <div class="skill-tags">
+          <span class="tag">Scikit-learn</span><span class="tag">TensorFlow</span><span class="tag">PyTorch</span><span class="tag">NLP</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-label">generative ai</div>
+        <div class="skill-tags">
+          <span class="tag">LangChain</span><span class="tag">LangGraph</span><span class="tag">OpenAI API</span><span class="tag">MCP</span><span class="tag">Hugging Face</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-label">devops &amp; cloud</div>
+        <div class="skill-tags">
+          <span class="tag">Docker</span><span class="tag">Git</span><span class="tag">GitHub</span><span class="tag">Vercel</span><span class="tag">Render</span><span class="tag">GCP</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="section-tag">background</div>
+    <h2>Education <span class="path">/education.md</span></h2>
+    <div>
+      <div class="edu-item">
+        <div>
+          <div>B.E. in Artificial Intelligence and Data Science</div>
+          <div class="edu-school">D.Y. Patil College of Engineering, Akurdi · CGPA 8.03</div>
+        </div>
+        <div class="edu-date">2026</div>
+      </div>
+      <div class="edu-item">
+        <div>
+          <div>HSC</div>
+          <div class="edu-school">Sri Chaitanya Junior College, Pune · 82.5%</div>
+        </div>
+        <div class="edu-date">2022</div>
+      </div>
+      <div class="edu-item">
+        <div>
+          <div>SSC</div>
+          <div class="edu-school">Oxford International School, Nanded (MH) · 80%</div>
+        </div>
+        <div class="edu-date">2020</div>
+      </div>
+    </div>
+    <div class="cert-list">
+      <span class="cert-pill">Deep Learning For Developers</span>
+      <span class="cert-pill">Python for Data Science</span>
+      <span class="cert-pill">Microsoft AI Skills Challenge</span>
+      <span class="cert-pill">The Complete Python Developer Course</span>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="contact-box">
+      <div class="section-tag" style="justify-content:center;">reach out</div>
+      <h2>Contact <span class="path">/contact</span></h2>
+      <p style="color:var(--text-dim); font-size:14.5px;">Open to entry-level Python developer and software engineering roles.</p>
+      <div class="contact-links">
+        <a href="mailto:vedantchidrawar01@gmail.com" class="btn btn-primary">Email me</a>
+        <a href="https://github.com/Vedant01111" class="btn" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/vedant-chidrawar/" class="btn" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="resume.pdf" download class="btn">↓ Resume</a>
+      </div>
+    </div>
+    <div class="footer-note">built with python developer energy · Hyderabad, India</div>
+  </footer>
+
+</div>
+
+<script>
+  // Highlight active nav tab on scroll
+  const sections = document.querySelectorAll('section, header');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const map = { about: 0, experience: 1, projects: 2, skills: 3, education: 4, contact: 5 };
+  window.addEventListener('scroll', () => {
+    let current = 'about';
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 120) current = sec.id || current;
+    });
+    tabs.forEach(t => t.classList.remove('active'));
+    const idx = map[current];
+    if (idx !== undefined) tabs[idx].classList.add('active');
+  }, { passive: true });
+</script>
+
+</body>
+</html>
